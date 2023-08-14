@@ -125,7 +125,7 @@ class Eval(abc.ABC):
             """
             sample, idx = args
             base_name, split = self.name.split(".")[0:2]
-            sample_id = f"{base_name}.{split}.{idx}"
+            sample_id = f"{base_name}.{split}.{idx}:{sample.get('idx','')}"
             with recorder.as_default_recorder(sample_id):
                 seed = f"{sample_id}:{self.seed}".encode("utf-8")
                 rng = random.Random(seed)
