@@ -1,5 +1,13 @@
-.ipynb_checkpoints
+.github/.ptp-sync-folder
+.github/ISSUE_TEMPLATE/.ptp-sync-folder
+.github/workflows/.ptp-sync-folder
+.ipynb_checkpoints/
+.project
+.ptp-sync/
+.pydevproject
+.settings/
 .ptp-sync-folder
+
 __pycache__/
 evals.egg-info/
 

@@ -19,6 +19,11 @@ class Includes(evals.Eval):
         assert len(completion_fns) == 1, "Includes only supports one completion fn"
         self.samples_jsonl = samples_jsonl
         self.ignore_case = ignore_case
+        
+        self.temperature = kwargs.get("temperature",0.0)
+        self.top_p = kwargs.get("top_p",1.0)
+        self.top_k = kwargs.get("top_k",-1)
+        
 
     def eval_sample(self, sample: Any, *_):
         assert isinstance(sample, dict), "sample must be a dict"
@@ -28,6 +33,10 @@ class Includes(evals.Eval):
         prompt = sample["input"]
         result = self.completion_fn(
             prompt=prompt,
+            
+            top_k=self.top_k,
+            top_p=self.top_p,
+            temperature=self.temperature,
         )
         sampled = result.get_completions()[0]
 

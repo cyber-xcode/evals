@@ -57,6 +57,8 @@ class Eval(abc.ABC):
         name: str = "no_name_eval.default",
         registry: Optional[Registry] = None,
         samples_jsonl: Optional[str] = None,
+        *args,
+        **kwargs,
     ):
         splits = name.split(".")
         if len(splits) < 2:

@@ -68,6 +68,8 @@ def n_ctx_from_model_name(model_name: str) -> Optional[int]:
 
 
 def is_chat_model(model_name: str) -> bool:
+    if "-chat-" in  model_name.lower():
+        return True
     if model_name in {"gpt-4-base"}:
         return False
 
