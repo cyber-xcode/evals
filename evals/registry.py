@@ -18,8 +18,6 @@ import openai
 import yaml
 
 from evals import OpenAIChatCompletionFn, OpenAICompletionFn
-from evals import  VertexAIChatCompletionFn, VertexAICompletionFn
-
 from evals.api import CompletionFn, DummyCompletionFn
 from evals.base import BaseEvalSpec, CompletionFnSpec, EvalSetSpec, EvalSpec
 from evals.elsuite.modelgraded.base import ModelGradedSpec
@@ -82,11 +80,6 @@ def is_chat_model(model_name: str) -> bool:
             return True
     return False
 
-def is_chat_model_vertexai(model_name: str) -> bool:
-    if model_name in {"chat-bison@001","chat-bison","codechat-bison@001","codechat-bison"}:
-        return True
-    return False
-
 
 T = TypeVar("T")
 RawRegistry = dict[str, Any]
@@ -109,14 +102,6 @@ class Registry:
             logger.warning(f"Could not fetch API model IDs from OpenAI API: {err}")
             return []
 
-    @cached_property
-    def api_model_ids_vertexai(self) -> list[str]:
-        #"chat-bison@001" --> "chat-bison"
-        return [ "codechat-bison","codetext-bison",
-                 "chat-bison","text-bison"] + [ "codechat-bison@001","codetext-bison@001",
-                 "chat-bison@001","text-bison@001"]
-        
-
     def make_completion_fn(self, name: str) -> CompletionFn:
         """
         Create a CompletionFn. The name can be one of the following formats:
@@ -129,12 +114,7 @@ class Registry:
 
         n_ctx = n_ctx_from_model_name(name)
 
-
-        if is_chat_model_vertexai(name):
-            return VertexAIChatCompletionFn(model=name, n_ctx=n_ctx)
-        elif name in self.api_model_ids_vertexai:
-            return VertexAICompletionFn(model=name, n_ctx=n_ctx)
-        elif is_chat_model(name):
+        if is_chat_model(name):
             return OpenAIChatCompletionFn(model=name, n_ctx=n_ctx)
         elif name in self.api_model_ids:
             return OpenAICompletionFn(model=name, n_ctx=n_ctx)
