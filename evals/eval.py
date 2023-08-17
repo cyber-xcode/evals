@@ -141,7 +141,9 @@ class Eval(abc.ABC):
                 logger.info(f"Running in threaded mode with {threads} threads!")
                 iter = pool.imap_unordered(eval_sample, work_items)
             idx_and_result = list(tqdm(iter, total=len(work_items), disable=not show_progress))
-        return [r for _, r in sorted(idx_and_result)]
+        x_ret =  [r for _, r in sorted(idx_and_result)]
+        x_ret = [item for item in x_ret if item is not None ]
+        return x_ret 
 
     def get_samples(self):
         if self.samples_jsonl is None:

@@ -6,7 +6,7 @@ from evals.api import CompletionFn
 from evals.elsuite import utils
 
 
-class Includes(evals.Eval):
+class BatchIncludes(evals.Eval):
     def __init__(
         self,
         completion_fns: list[CompletionFn],
@@ -22,6 +22,7 @@ class Includes(evals.Eval):
         
         self.temperature = kwargs.get("temperature",0.0)
         self.top_p = kwargs.get("top_p",1.0)
+        self.sample_n = kwargs.get("n",1)
         # self.top_k = kwargs.get("top_k",-1)
         
 
@@ -38,26 +39,31 @@ class Includes(evals.Eval):
                 # top_k=self.top_k,
                 top_p=self.top_p,
                 temperature=self.temperature,
+                n=self.sample_n,
                 max_tokens=2048,
             )
         except :
             return None 
-        sampled = result.get_completions()[0]
-
-        ideal = sample["ideal"]
-        if not isinstance(ideal, list):
-            ideal = [ideal]
-
-        assert isinstance(ideal, list) and all(
-            isinstance(i, str) for i in ideal
-        ), "ideal must be a list of strings"
-
-        includes_answer = any(
-            [utils.get_answer(sampled, ref, self.ignore_case) is not None for ref in ideal]
-        )
-        evals.record.record_match(
-            includes_answer, expected=sample["ideal"], picked=sampled, sampled=sampled
-        )
+        all_samples = result.get_completions() 
+        
+        sampled = all_samples[0]
+        
+        if 1==1:
+    
+            ideal = sample["ideal"]
+            if not isinstance(ideal, list):
+                ideal = [ideal]
+    
+            assert isinstance(ideal, list) and all(
+                isinstance(i, str) for i in ideal
+            ), "ideal must be a list of strings"
+    
+            includes_answer = any(
+                [utils.get_answer(sampled, ref, self.ignore_case) is not None for ref in ideal]
+            )
+            evals.record.record_match(
+                includes_answer, expected=sample["ideal"], picked=all_samples, sampled=sampled
+            )
         return includes_answer
 
     def run(self, recorder):
